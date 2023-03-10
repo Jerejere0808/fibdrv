@@ -17,7 +17,7 @@ static inline long long get_nanotime()
 
 int main()
 {
-    // char buf[500];
+    char buf[500];
     char write_buf[] = "testing writing";
     int offset = 1000; /* TODO: try test something bigger than the limit */
 
