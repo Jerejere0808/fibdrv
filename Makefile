@@ -1,7 +1,10 @@
 CONFIG_MODULE_SIG = n
-TARGET_MODULE := fibdrv
+TARGET_MODULE := fibdrv_new
 
-obj-m := $(TARGET_MODULE).o
+obj-m += $(TARGET_MODULE).o
+fibdrv_new-objs := \
+	fibdrv.o \
+	bn.o
 ccflags-y := -std=gnu99 -Wno-declaration-after-statement
 
 KDIR := /lib/modules/$(shell uname -r)/build
@@ -39,3 +42,15 @@ check: all
 	$(MAKE) unload
 	@diff -u out scripts/expected.txt && $(call pass)
 	@scripts/verify.py
+
+plot: all
+	$(MAKE) unload
+	$(MAKE) load
+	@python3 scripts/plot.py
+	$(MAKE) unload
+
+compare_plot: all
+	$(MAKE) unload
+	$(MAKE) load
+	@python3 scripts/compare_plot.py
+	$(MAKE) unload

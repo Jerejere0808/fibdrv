@@ -7,6 +7,8 @@
 #include <linux/module.h>
 #include <linux/mutex.h>
 
+#include "bn.h"
+
 MODULE_LICENSE("Dual MIT/GPL");
 MODULE_AUTHOR("National Cheng Kung University, Taiwan");
 MODULE_DESCRIPTION("Fibonacci engine driver");
@@ -17,12 +19,16 @@ MODULE_VERSION("0.1");
 /* MAX_LENGTH is set to 92 because
  * ssize_t can't fit the number > 92
  */
-#define MAX_LENGTH 92
+#define MAX_LENGTH 1000
 
 static dev_t fib_dev = 0;
 static struct cdev *fib_cdev;
 static struct class *fib_class;
 static DEFINE_MUTEX(fib_mutex);
+
+static ktime_t kt;
+
+
 
 static long long fib_sequence(long long k)
 {
@@ -60,7 +66,22 @@ static ssize_t fib_read(struct file *file,
                         size_t size,
                         loff_t *offset)
 {
-    return (ssize_t) fib_sequence(*offset);
+    bn *result = bn_alloc(1);
+    char *result_string;
+    int len;
+
+    kt = ktime_get();
+    bn_fib_fdoubling(result, *offset);
+    kt = ktime_sub(ktime_get(), kt);
+    result_string = bn_to_string(result);
+    len = strlen(result_string);
+
+
+    copy_to_user(buf, result_string, len + 1);
+
+    bn_free(result);
+    kfree(result_string);
+    return ktime_to_ns(kt);
 }
 
 /* write operation is skipped */
@@ -69,7 +90,29 @@ static ssize_t fib_write(struct file *file,
                          size_t size,
                          loff_t *offset)
 {
-    return 1;
+    bn *result = bn_alloc(1);
+    switch (size) {
+    case 0:
+        kt = ktime_get();
+        bn_fib_fdoubling(result, *offset);
+        kt = ktime_sub(ktime_get(), kt);
+        break;
+
+    case 1:
+        kt = ktime_get();
+        bn_fib_fdoubling_nocpy(result, *offset);
+        kt = ktime_sub(ktime_get(), kt);
+        break;
+
+    case 2:
+        kt = ktime_get();
+        bn_fib_fdoubling_Q_Matrix(result, *offset);
+        kt = ktime_sub(ktime_get(), kt);
+        break;
+    }
+
+    bn_free(result);
+    return ktime_to_ns(kt);
 }
 
 static loff_t fib_device_lseek(struct file *file, loff_t offset, int orig)
