@@ -35,8 +35,8 @@ if __name__ == "__main__":
     ax.set_xlabel(r'$n_{th}$ fibonacci', fontsize = 16)
     ax.set_ylabel('time (ns)', fontsize = 16)
 
-    ax.plot(X, Y[0], marker = '+', markersize = 7, label = 'bn_fib_fdoubling_nocpy')
-    ax.plot(X, Y[1], marker = '*', markersize = 3, label = 'bn_fib_fdoubling_Q_Matrix')
+    ax.plot(X, Y[0], marker = '+', markersize = 7, label = 'bn_fib_fdoubling')
+    ax.plot(X, Y[1], marker = '*', markersize = 3, label = 'bn_fib_fdoubling_nocpy')
     ax.legend(loc = 'upper left')
 
     plt.show()

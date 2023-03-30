@@ -71,14 +71,13 @@ static ssize_t fib_read(struct file *file,
     int len;
 
     kt = ktime_get();
-    bn_fib_fdoubling(result, *offset);
+    bn_fib_fdoubling_nocpy(result, *offset);
     kt = ktime_sub(ktime_get(), kt);
     result_string = bn_to_string(result);
     len = strlen(result_string);
 
 
     copy_to_user(buf, result_string, len + 1);
-
     bn_free(result);
     kfree(result_string);
     return ktime_to_ns(kt);
@@ -103,7 +102,6 @@ static ssize_t fib_write(struct file *file,
         bn_fib_fdoubling_nocpy(result, *offset);
         kt = ktime_sub(ktime_get(), kt);
         break;
-
     case 2:
         kt = ktime_get();
         bn_fib_fdoubling_Q_Matrix(result, *offset);

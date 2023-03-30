@@ -4,11 +4,18 @@
  * number[size - 1] contains most significant bits
  * sign = 1 for negative number
  */
+
+#define BN_WSIZE 8
+
+typedef unsigned long long bn_data;
+typedef unsigned __int128 bn_data_tmp;
+
+
 typedef struct _bn {
-    unsigned int *number;
-    unsigned int size;
+    bn_data *number;
+    bn_data size;
     int sign;
-    int capacity;
+    bn_data capacity;
 } bn;
 
 
@@ -67,6 +74,5 @@ void bn_mult(const bn *a, const bn *b, bn *c);
 void bn_fib_fdoubling(bn *dest, unsigned int n);
 void bn_fib_fdoubling_nocpy(bn *dest, unsigned int n);
 void bn_fib_fdoubling_Q_Matrix(bn *dest, unsigned int n);
-
 
 void bn_fib(bn *dest, unsigned int n);

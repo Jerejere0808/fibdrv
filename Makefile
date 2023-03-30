@@ -54,3 +54,9 @@ compare_plot: all
 	$(MAKE) load
 	@python3 scripts/compare_plot.py
 	$(MAKE) unload
+
+perf: all
+	$(MAKE) unload
+	$(MAKE) load
+	@sudo perf stat -e cycles,instructions,cache-references,cache-misses ./client > out
+	$(MAKE) unload

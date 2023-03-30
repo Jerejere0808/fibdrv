@@ -18,7 +18,7 @@ static inline long long get_nanotime()
 int main()
 {
     char buf[500];
-    char write_buf[] = "testing writing";
+    // char write_buf[] = "testing writing";
     int offset = 1000; /* TODO: try test something bigger than the limit */
 
     int fd = open(FIB_DEV, O_RDWR);
@@ -34,14 +34,14 @@ int main()
         exit(2);
     }
 
-    for (int i = 0; i <= offset; i++) {
+    /*for (int i = 0; i <= offset; i++) {
         long long t1, t2;
         lseek(fd, i, SEEK_SET);
-        t1 = write(fd, write_buf, 1);
-        t2 = write(fd, write_buf, 2);
-        // printf("%d %lld %lld\n", i, t1, t2);
+        t1 = write(fd, write_buf, 0);
+        t2 = write(fd, write_buf, 1);
+        printf("%d %lld %lld\n", i, t1, t2);
         fprintf(data, "%d %lld %lld\n", i, t1, t2);
-    }
+    }*/
 
     for (int i = 0; i <= offset; i++) {
         lseek(fd, i, SEEK_SET);
